@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Gestión de Categorías</h4>
+</div>
+
+<a href="{% url 'crearCategoria' %}" class="btn btn-info mb-3">Agregar Categoría</a>
+
+{% if categorias %}
+<table id="miTabla" class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat in categorias %}
+        <tr>
+            <td>{{ cat.id }}</td>
+            <td>{{ cat.nombre }}</td>
+            <td>{{ cat.descripcion }}</td>
+            <td>{% if cat.estado %}Activa{% else %}Inactiva{% endif %}</td>
+            <td>
+                <a href="{% url 'editarCategoria' cat.id %}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminarCategoria{{ cat.id }}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+
+        <div class="modal fade" id="modalEliminarCategoria{{ cat.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Eliminación</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de eliminar la categoría {{ cat.nombre }}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <a href="{% url 'eliminarCategoria' cat.id %}" class="btn btn-danger">Confirmar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No hay categorías registradas.</div>
+{% endif %}
+{% endblock %}

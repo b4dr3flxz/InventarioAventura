@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{% block title %}Ecoparque Aventuras del Sur{% endblock %}</title>
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+
+        <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-mountain"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Aventuras Sur</div>
+            </a>
+
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'dashboard' %}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Panel de Control</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'perfil' %}">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            {% if perfil.rol == 'Administrador' %}
+            <div class="sidebar-heading">Administración</div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ListaUsuarios' %}">
+                    <i class="fas fa-fw fa-users-cog"></i>
+                    <span>Usuarios y Guías</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ListaCategorias' %}">
+                    <i class="fas fa-fw fa-tags"></i>
+                    <span>Categorías</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ListaExperiencias' %}">
+                    <i class="fas fa-fw fa-hiking"></i>
+                    <span>Todas las Experiencias</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ListaReservasAdmin' %}">
+                    <i class="fas fa-fw fa-chart-bar"></i>
+                    <span>Reportes y Reservas</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perfil.rol == 'Guia' %}
+            <div class="sidebar-heading">Guía Ecoturístico</div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'ListaExperiencias' %}">
+                    <i class="fas fa-fw fa-route"></i>
+                    <span>Mis Tours Asignados</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'crearExperiencia' %}">
+                    <i class="fas fa-fw fa-plus-circle"></i>
+                    <span>Registrar Actividad</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perfil.rol == 'Turista' %}
+            <div class="sidebar-heading">Turista</div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'catalogo' %}">
+                    <i class="fas fa-fw fa-compass"></i>
+                    <span>Catálogo de Actividades</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'misReservas' %}">
+                    <i class="fas fa-fw fa-ticket-alt"></i>
+                    <span>Mis Reservas</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' %}">
+                    <i class="fas fa-fw fa-home"></i>
+                    <span>Inicio Público</span>
+                </a>
+            </li>
+
+            <div class="text-center d-none d-md-inline mt-3">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <span class="badge badge-success px-3 py-2">Rol: {{ perfil.nombre_rol }}</span>
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                                <img class="img-profile rounded-circle" src="{% static 'img/undraw_profile.svg' %}">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                                <a class="dropdown-item" href="{% url 'perfil' %}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Mi Perfil
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form action="{% url 'logout' %}" method="post" class="px-3">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm btn-block">Cerrar Sesión</button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="container-fluid">
+                    {% block contenido %}
+                    {% endblock %}
+                </div>
+
+            </div>
+
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Ecoparque y Reserva Natural "Aventuras del Sur"</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#miTabla').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                }
+            });
+        });
+    </script>
+</body>
+</html>

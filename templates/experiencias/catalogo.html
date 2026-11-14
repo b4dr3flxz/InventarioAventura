@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Catálogo de Experiencias</h4>
+</div>
+
+<div class="mb-3">
+    <a href="{% url 'catalogo' %}" class="btn btn-sm {% if not categoria_seleccionada %}btn-info{% else %}btn-outline-info{% endif %}">Todas</a>
+    {% for cat in categorias %}
+    <a href="?categoria={{ cat.id }}" class="btn btn-sm {% if categoria_seleccionada == cat.id|stringformat:'s' %}btn-info{% else %}btn-outline-info{% endif %}">{{ cat.nombre }}</a>
+    {% endfor %}
+</div>
+
+<div class="row">
+    {% for exp in experiencias %}
+    <div class="col-md-4 mb-3">
+        <div class="card p-3 h-100">
+            <h5>{{ exp.titulo }}</h5>
+            <p class="text-muted mb-1">{{ exp.categoria.nombre }}</p>
+            <p>{{ exp.descripcion }}</p>
+            <p class="mb-1"><strong>Fecha:</strong> {{ exp.fecha_hora|date:"d/m/Y H:i" }}</p>
+            <p class="mb-1"><strong>Precio:</strong> ${{ exp.precio }}</p>
+            <p class="mb-3"><strong>Cupos libres:</strong> {{ exp.cupos_disponibles }} / {{ exp.cupo_maximo }}</p>
+
+            {% if exp.id in mis_ids %}
+                <a href="{% url 'misReservas' %}" class="btn btn-secondary btn-block">Ya Reservado</a>
+            {% elif exp.cupos_disponibles > 0 %}
+                <a href="{% url 'detalleExperiencia' exp.id %}" class="btn btn-info btn-block">Elegir Ruta</a>
+            {% else %}
+                <button class="btn btn-secondary btn-block" disabled>Agotado</button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No hay experiencias disponibles.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

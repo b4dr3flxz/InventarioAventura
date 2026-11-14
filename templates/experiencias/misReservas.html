@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Reservas | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Mis Reservas</h4>
+</div>
+
+<a href="{% url 'catalogo' %}" class="btn btn-info mb-3">Nueva Reserva</a>
+
+{% if reservas %}
+<table id="miTabla" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Experiencia</th>
+            <th>Categoría</th>
+            <th>Fecha Actividad</th>
+            <th>Precio</th>
+            <th>Fecha Inscripción</th>
+            <th>Estado Pago</th>
+            <th>Valoración</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in reservas %}
+        <tr>
+            <td><a href="{% url 'detalleExperiencia' r.experiencia.id %}">{{ r.experiencia.titulo }}</a></td>
+            <td>{{ r.experiencia.categoria.nombre }}</td>
+            <td>{{ r.experiencia.fecha_hora|date:"d/m/Y H:i" }}</td>
+            <td>${{ r.experiencia.precio }}</td>
+            <td>{{ r.fecha_inscripcion|date:"d/m/Y H:i" }}</td>
+            <td>
+                <span class="badge badge-{% if r.estado_pago == 'Confirmado' %}success{% else %}warning{% endif %}">
+                    {{ r.estado_pago }}
+                </span>
+            </td>
+            <td>{% if r.valoracion %}{{ r.valoracion }}/5{% else %}-{% endif %}</td>
+            <td>
+                {% if r.estado_pago == 'Pendiente' %}
+                <form method="post" action="{% url 'confirmarPago' r.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success btn-sm">Confirmar Pago</button>
+                </form>
+                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalCancelarReserva{{ r.id }}">
+                    Cancelar
+                </button>
+                {% else %}
+                <a href="{% url 'valorarExperiencia' r.id %}" class="btn btn-info btn-sm">Valorar</a>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% if r.estado_pago == 'Pendiente' %}
+        <div class="modal fade" id="modalCancelarReserva{{ r.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cancelar Reserva</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de cancelar su reserva en {{ r.experiencia.titulo }}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver</button>
+                        <form method="post" action="{% url 'cancelarReserva' r.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Confirmar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">Aún no tienes reservas registradas.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Valorar Experiencia | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Valorar: {{ inscripcion.experiencia.titulo }}</h4>
+</div>
+
+<div class="row justify-content-center">
+    <form method="post" class="form col-6 card p-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-info mt-4" value="Guardar">
+        <a href="{% url 'misReservas' %}" class="btn btn-secondary mt-2">Volver</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ experiencia.titulo }} | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>{{ experiencia.titulo }}</h4>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h5>Detalle de la Actividad</h5>
+            <hr>
+            <p>{{ experiencia.descripcion }}</p>
+            <p><strong>Categoría:</strong> {{ experiencia.categoria.nombre }}</p>
+            <p><strong>Guía:</strong> {{ experiencia.creador.get_full_name|default:experiencia.creador.username }}</p>
+            <p><strong>Fecha y Hora:</strong> {{ experiencia.fecha_hora|date:"d/m/Y H:i" }}</p>
+            <p><strong>Precio:</strong> ${{ experiencia.precio }}</p>
+            <p><strong>Cupos Disponibles:</strong> {{ experiencia.cupos_disponibles }} / {{ experiencia.cupo_maximo }}</p>
+
+            {% if perfil.rol == 'Turista' %}
+                {% if ya_inscrito %}
+                    <div class="alert alert-info">Ya tienes una reserva ({{ ya_inscrito.estado_pago }}).</div>
+                    <a href="{% url 'misReservas' %}" class="btn btn-info">Ir a Mis Reservas</a>
+                {% elif experiencia.cupos_disponibles > 0 and experiencia.estado %}
+                    <form method="post" action="{% url 'reservarExperiencia' experiencia.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-block">Reservar Ticket</button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-secondary">Sin cupos disponibles.</div>
+                {% endif %}
+                <a href="{% url 'catalogo' %}" class="btn btn-secondary mt-2">Volver</a>
+            {% else %}
+                <a href="{% url 'ListaExperiencias' %}" class="btn btn-secondary mt-2">Volver</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if perfil.rol == 'Administrador' or perfil.rol == 'Guia' %}
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h5>Visitantes Inscritos</h5>
+            <hr>
+            {% if inscripciones %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Turista</th>
+                        <th>Estado Pago</th>
+                        <th>Valoración</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ins in inscripciones %}
+                    <tr>
+                        <td>{{ ins.usuario.username }}</td>
+                        <td>{{ ins.estado_pago }}</td>
+                        <td>{% if ins.valoracion %}{{ ins.valoracion }}/5{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info">No hay visitantes inscritos todavía.</div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Mi Perfil ({{ perfil.nombre_rol }})</h4>
+</div>
+
+<div class="row justify-content-center">
+    <form method="post" class="form col-6 card p-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-info mt-4" value="Guardar">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Volver</a>
+    </form>
+</div>
+{% endblock %}

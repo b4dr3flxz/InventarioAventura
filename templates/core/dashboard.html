@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de Control | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>Panel de Control - {{ perfil.nombre_rol }}</h4>
+</div>
+
+{% if rol == 'Administrador' %}
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card p-3">
+            <h6>Usuarios Registrados</h6>
+            <h3>{{ total_usuarios }}</h3>
+            <a href="{% url 'ListaUsuarios' %}" class="btn btn-info btn-sm">Gestionar usuarios</a>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card p-3">
+            <h6>Categorías</h6>
+            <h3>{{ total_categorias }}</h3>
+            <a href="{% url 'ListaCategorias' %}" class="btn btn-info btn-sm">Gestionar categorías</a>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card p-3">
+            <h6>Experiencias</h6>
+            <h3>{{ total_experiencias }}</h3>
+            <a href="{% url 'ListaExperiencias' %}" class="btn btn-info btn-sm">Ver experiencias</a>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card p-3">
+            <h6>Reservas Totales</h6>
+            <h3>{{ total_reservas }}</h3>
+            <a href="{% url 'ListaReservasAdmin' %}" class="btn btn-info btn-sm">Ver reservas</a>
+        </div>
+    </div>
+</div>
+
+{% elif rol == 'Guia' %}
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6>Mis Experiencias Creadas</h6>
+            <h3>{{ total_mis_experiencias }}</h3>
+            <a href="{% url 'ListaExperiencias' %}" class="btn btn-info btn-sm">Gestionar mis experiencias</a>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6>Visitantes Inscritos</h6>
+            <h3>{{ total_visitantes }}</h3>
+            <a href="{% url 'ListaExperiencias' %}" class="btn btn-info btn-sm">Ver inscritos</a>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6>Mis Reservas</h6>
+            <h3>{{ total_mis_reservas }}</h3>
+            <a href="{% url 'misReservas' %}" class="btn btn-info btn-sm">Ver historial</a>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6>Reservas Confirmadas</h6>
+            <h3>{{ reservas_confirmadas }}</h3>
+            <a href="{% url 'catalogo' %}" class="btn btn-info btn-sm">Explorar catálogo</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

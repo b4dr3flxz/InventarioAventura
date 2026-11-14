@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Experiencias | Aventuras del Sur{% endblock %}
+
+{% block contenido %}
+<div class="alert alert-success">
+    <h4>{% if es_admin %}Todas las Experiencias{% else %}Mis Experiencias{% endif %}</h4>
+</div>
+
+<a href="{% url 'crearExperiencia' %}" class="btn btn-info mb-3">Agregar Experiencia</a>
+
+{% if experiencias %}
+<table id="miTabla" class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Guía</th>
+            <th>Fecha y Hora</th>
+            <th>Precio</th>
+            <th>Cupos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exp in experiencias %}
+        <tr>
+            <td>{{ exp.id }}</td>
+            <td>{{ exp.titulo }}</td>
+            <td>{{ exp.categoria.nombre }}</td>
+            <td>{{ exp.creador.username }}</td>
+            <td>{{ exp.fecha_hora|date:"d/m/Y H:i" }}</td>
+            <td>${{ exp.precio }}</td>
+            <td>{{ exp.inscritos_count }} / {{ exp.cupo_maximo }}</td>
+            <td>
+                <a href="{% url 'cambiarEstadoExperiencia' exp.id %}" class="badge badge-{% if exp.estado %}success{% else %}secondary{% endif %}">
+                    {% if exp.estado %}Activa{% else %}Inactiva{% endif %}
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'detalleExperiencia' exp.id %}" class="btn btn-info"><i class="fas fa-users"></i></a>
+                <a href="{% url 'editarExperiencia' exp.id %}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                {% if es_admin %}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminarExperiencia{{ exp.id }}">
+                    <i class="fas fa-trash"></i>
+                </button>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% if es_admin %}
+        <div class="modal fade" id="modalEliminarExperiencia{{ exp.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Eliminación</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de eliminar la experiencia {{ exp.titulo }}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <a href="{% url 'eliminarExperiencia' exp.id %}" class="btn btn-danger">Confirmar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No hay experiencias registradas.</div>
+{% endif %}
+{% endblock %}
