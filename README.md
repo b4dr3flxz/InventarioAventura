@@ -7,8 +7,8 @@ Proyecto de Django con MySQL para la unidad 3. La base se llama
 
 | Rol           | Usuario       | Contraseña |
 |---------------|---------------|------------|
-| Administrador | admin         | ...        |
-| Guía          | guia_carlos   | ...        |
-| Guía          | guia_camila   | ...        |
-| Turista       | turista_sofia | ...        |
-| Turista       | turista_diego | ...        |
+| Administrador | admin         | Admin1234!        |
+| Guía          | guia_carlos   | Guia1234!        |
+| Guía          | guia_camila   | Guia1234!        |
+| Turista       | turista_sofia | Turista1234!        |
+| Turista       | turista_diego | Turista1234!        |
